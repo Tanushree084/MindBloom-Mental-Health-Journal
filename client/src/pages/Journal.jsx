@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Edit3, Trash2, Calendar } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { journalAPI } from '../utils/api';
+import styles from './Journal.module.css';
 
 const Journal = () => {
   const [journals, setJournals] = useState([]);
@@ -113,12 +114,12 @@ const Journal = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">My Journal</h1>
+    <div className={styles.journalContainer}>
+      <div className={styles.journalHeader}>
+        <h1 className={styles.journalTitle}>My Journal</h1>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          className={styles.newEntryBtn}
         >
           <Plus className="h-5 w-5" />
           <span>New Entry</span>
@@ -126,33 +127,33 @@ const Journal = () => {
       </div>
 
       {showForm && (
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-          <h2 className="text-xl font-semibold mb-4">
+        <div className={styles.journalForm}>
+          <h2 className={styles.formTitle}>
             {editingJournal ? 'Edit Journal Entry' : 'New Journal Entry'}
           </h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className={styles.formGrid}>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className={styles.formLabel}>
                 Title
               </label>
               <input
                 type="text"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className={styles.formInput}
                 placeholder="How are you feeling today?"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className={styles.formLabel}>
                 Mood
               </label>
               <select
                 value={formData.mood}
                 onChange={(e) => setFormData({ ...formData, mood: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className={`${styles.formInput} ${styles.formSelect}`}
               >
                 {moods.map((mood) => (
                   <option key={mood.value} value={mood.value}>
@@ -163,24 +164,24 @@ const Journal = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className={styles.formLabel}>
                 Content
               </label>
               <textarea
                 value={formData.content}
                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                 rows={6}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className={`${styles.formInput} ${styles.formTextarea}`}
                 placeholder="Write about your thoughts, feelings, and experiences..."
                 required
               />
             </div>
 
-            <div className="flex space-x-4">
+            <div className={styles.formButtons}>
               <button
                 type="submit"
                 disabled={isLoading}
-                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                className={styles.saveBtn}
               >
                 {isLoading ? 'Saving...' : (editingJournal ? 'Update' : 'Save')}
               </button>
@@ -191,7 +192,7 @@ const Journal = () => {
                   setEditingJournal(null);
                   setFormData({ title: '', content: '', mood: 'neutral' });
                 }}
-                className="border border-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+                className={styles.cancelBtn}
               >
                 Cancel
               </button>
@@ -200,9 +201,9 @@ const Journal = () => {
         </div>
       )}
 
-      <div className="space-y-6">
+      <div className={styles.journalEntries}>
         {journals.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-lg shadow">
+          <div className={styles.emptyState}>
             <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-800 mb-2">No journal entries yet</h3>
             <p className="text-gray-600">Start writing your first journal entry to begin your mental health journey.</p>
@@ -211,32 +212,32 @@ const Journal = () => {
           journals.map((journal) => {
             const mood = moods.find(m => m.value === journal.mood);
             return (
-              <div key={journal._id} className="bg-white rounded-lg shadow-lg p-6">
-                <div className="flex justify-between items-start mb-4">
+              <div key={journal._id} className={styles.journalCard}>
+                <div className={styles.cardHeader}>
                   <div>
-                    <h3 className="text-xl font-semibold text-gray-800">{journal.title}</h3>
-                    <p className="text-sm text-gray-500">{formatDate(journal.createdAt)}</p>
+                    <h3 className={styles.entryTitle}>{journal.title}</h3>
+                    <p className={styles.entryDate}>{formatDate(journal.createdAt)}</p>
                   </div>
                   {mood && (
-                    <span className={`text-sm font-medium ${mood.color}`}>
+                    <span className={`${styles.moodBadge} ${styles[mood.value]}`}>
                       {mood.label}
                     </span>
                   )}
                 </div>
                 
-                <p className="text-gray-700 whitespace-pre-wrap mb-4">{journal.content}</p>
+                <p className={styles.entryContent}>{journal.content}</p>
                 
-                <div className="flex space-x-3">
+                <div className={styles.cardActions}>
                   <button
                     onClick={() => handleEdit(journal)}
-                    className="flex items-center space-x-1 text-blue-600 hover:text-blue-700 text-sm"
+                    className={styles.editBtn}
                   >
                     <Edit3 className="h-4 w-4" />
                     <span>Edit</span>
                   </button>
                   <button
                     onClick={() => handleDelete(journal._id)}
-                    className="flex items-center space-x-1 text-red-600 hover:text-red-700 text-sm"
+                    className={styles.deleteBtn}
                   >
                     <Trash2 className="h-4 w-4" />
                     <span>Delete</span>

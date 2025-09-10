@@ -2,20 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-  min-height: 100vh;
+
+/* Green theme variables */
+:root {
+  --primary-green: #16a34a;
+  --primary-green-hover: #15803d;
+  --secondary-green: #22c55e;
+  --light-green: #bbf7d0;
+  --dark-green: #166534;
+  --text-dark: #1f2937;
+  --text-light: #6b7280;
+  --bg-light: #f9fafb;
 }
 
 /* Custom scrollbar */
@@ -56,4 +54,23 @@ body {
 
 .animate-bounce {
   animation: bounce 1s infinite;
+}
+
+/* Green theme buttons */
+.btn-primary {
+  @apply bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors font-semibold;
+}
+
+.btn-secondary {
+  @apply border border-green-600 text-green-600 px-4 py-2 rounded-lg hover:bg-green-50 transition-colors font-semibold;
+}
+
+/* Card styles */
+.card {
+  @apply bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow;
+}
+
+/* Input styles */
+.input-field {
+  @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent;
 }

@@ -1,8 +1,8 @@
-
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Brain, User, LogOut } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import styles from './Navbar.module.css';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,26 +20,22 @@ const Navbar = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="bg-white shadow-lg border-b border-gray-200">
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center h-16">
+    <nav className={styles.navbar}>
+      <div className={styles.navbarContainer}>
+        <div className={styles.navbarContent}>
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <Brain className="h-8 w-8 text-blue-600" />
-            <span className="text-xl font-bold text-gray-800">MindJournal</span>
+          <Link to="/" className={styles.navbarBrand}>
+            <Brain className={styles.logoIcon} />
+            <span className={styles.logoText}>MindBloom</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className={styles.desktopNav}>
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 to={item.href}
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  isActive(item.href)
-                    ? 'text-blue-600 bg-blue-50'
-                    : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'
-                }`}
+                className={`${styles.navLink} ${isActive(item.href) ? styles.navLinkActive : ''}`}
               >
                 {item.name}
               </Link>
@@ -47,32 +43,32 @@ const Navbar = () => {
           </div>
 
           {/* User Section */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className={styles.userSection}>
             {user ? (
-              <div className="flex items-center space-x-3">
-                <div className="flex items-center space-x-2">
-                  <User className="h-5 w-5 text-gray-600" />
-                  <span className="text-sm text-gray-700">{user.username}</span>
+              <div className={styles.userContainer}>
+                <div className={styles.userInfo}>
+                  <User className={styles.userIcon} />
+                  <span className={styles.username}>{user.username}</span>
                 </div>
                 <button
                   onClick={logout}
-                  className="flex items-center space-x-1 px-3 py-2 text-sm text-gray-600 hover:text-red-600 transition-colors"
+                  className={styles.logoutBtn}
                 >
-                  <LogOut className="h-4 w-4" />
+                  <LogOut className={styles.logoutIcon} />
                   <span>Logout</span>
                 </button>
               </div>
             ) : (
-              <div className="flex items-center space-x-2">
+              <div className={styles.authButtons}>
                 <Link
                   to="/login"
-                  className="px-4 py-2 text-sm text-gray-600 hover:text-blue-600 transition-colors"
+                  className={styles.loginBtn}
                 >
                   Login
                 </Link>
                 <Link
                   to="/register"
-                  className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                  className={styles.signupBtn}
                 >
                   Sign Up
                 </Link>
@@ -81,67 +77,61 @@ const Navbar = () => {
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          <div className={styles.mobileMenuButton}>
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2 rounded-md text-gray-600 hover:text-blue-600 hover:bg-gray-50"
+              className={styles.mobileMenuBtn}
             >
-              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {isOpen ? <X className={styles.menuIcon} /> : <Menu className={styles.menuIcon} />}
             </button>
           </div>
         </div>
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className="md:hidden border-t border-gray-200 py-4">
-            <div className="flex flex-col space-y-2">
+          <div className={styles.mobileNav}>
+            <div className={styles.mobileNavContent}>
               {navigation.map((item) => (
                 <Link
                   key={item.name}
                   to={item.href}
                   onClick={() => setIsOpen(false)}
-                  className={`px-3 py-2 rounded-md text-base font-medium transition-colors ${
-                    isActive(item.href)
-                      ? 'text-blue-600 bg-blue-50'
-                      : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'
-                  }`}
+                  className={`${styles.mobileNavLink} ${isActive(item.href) ? styles.mobileNavLinkActive : ''}`}
                 >
                   {item.name}
                 </Link>
               ))}
               
               {user ? (
-                <div className="px-3 py-2 border-t border-gray-200 mt-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <User className="h-5 w-5 text-gray-600" />
-                      <span className="text-sm text-gray-700">{user.username}</span>
-                    </div>
-                    <button
-                      onClick={() => {
-                        logout();
-                        setIsOpen(false);
-                      }}
-                      className="flex items-center space-x-1 text-sm text-gray-600 hover:text-red-600 transition-colors"
-                    >
-                      <LogOut className="h-4 w-4" />
-                      <span>Logout</span>
-                    </button>
+                <div className={styles.mobileUserSection}>
+                  <div className={styles.mobileUserInfo}>
+                    <User className={styles.mobileUserIcon} />
+                    <span className={styles.mobileUsername}>{user.username}</span>
                   </div>
+                  <button
+                    onClick={() => {
+                      logout();
+                      setIsOpen(false);
+                    }}
+                    className={styles.mobileLogoutBtn}
+                  >
+                    <LogOut className={styles.mobileLogoutIcon} />
+                    <span>Logout</span>
+                  </button>
                 </div>
               ) : (
-                <div className="flex space-x-2 px-3 py-2 border-t border-gray-200 mt-2">
+                <div className={styles.mobileAuthButtons}>
                   <Link
                     to="/login"
                     onClick={() => setIsOpen(false)}
-                    className="flex-1 text-center px-4 py-2 text-sm text-gray-600 hover:text-blue-600 transition-colors"
+                    className={styles.mobileLoginBtn}
                   >
                     Login
                   </Link>
                   <Link
                     to="/register"
                     onClick={() => setIsOpen(false)}
-                    className="flex-1 text-center px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                    className={styles.mobileSignupBtn}
                   >
                     Sign Up
                   </Link>

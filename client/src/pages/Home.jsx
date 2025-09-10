@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { BookOpen, BarChart3, MessageSquare, Brain } from 'lucide-react';
+import styles from './Home.module.css';
 
 const Home = () => {
   const { user } = useAuth();
@@ -37,32 +38,32 @@ const Home = () => {
   ];
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className={styles.homeContainer}>
       {/* Hero Section */}
-      <section className="text-center py-16">
-        <h1 className="text-5xl font-bold text-gray-800 mb-6">
-          Welcome to <span className="text-blue-600">MindJournal</span>
+      <section className={styles.heroSection}>
+        <h1 className={styles.heroTitle}>
+          Welcome to <span className="text-blue-600">MindBloom</span>
         </h1>
-        <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+        <p className={styles.heroSubtitle}>
           Your personal mental health companion. Track your mood, journal your thoughts, 
           and receive AI-powered support on your wellness journey.
         </p>
         
         {user ? (
           <div className="space-y-4">
-            <p className="text-lg text-gray-700">
+            <p className={styles.welcomeText}>
               Welcome back, <span className="font-semibold text-blue-600">{user.username}</span>!
             </p>
             <div className="flex justify-center space-x-4">
               <Link
                 to="/journal"
-                className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+                className={styles.primaryButton}
               >
                 Write Journal
               </Link>
               <Link
                 to="/mood"
-                className="px-8 py-3 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-semibold"
+                className={styles.secondaryButton}
               >
                 Track Mood
               </Link>
@@ -70,21 +71,19 @@ const Home = () => {
           </div>
         ) : (
           <div className="space-y-4">
-            <p className="text-lg text-gray-700">
+            <p className={styles.welcomeText}>
               Start your mental wellness journey today. It's free and anonymous to try.
             </p>
             <div className="flex justify-center space-x-4">
               <Link
                 to="/register"
-                className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+                className={styles.primaryButton}
               >
-                Get Started
               </Link>
               <Link
                 to="/about"
-                className="px-8 py-3 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-semibold"
+                className={styles.secondaryButton}
               >
-                Learn More
               </Link>
             </div>
           </div>
@@ -92,20 +91,20 @@ const Home = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-16">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">
-          How MindJournal Helps You
+      <section className={styles.featuresSection}>
+        <h2 className={styles.sectionTitle}>
+          How MindBloom Helps You ?
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature, index) => (
-            <div key={index} className="text-center p-6 rounded-lg hover:shadow-lg transition-shadow">
-              <div className={`w-16 h-16 ${feature.bgColor} rounded-full flex items-center justify-center mx-auto mb-4`}>
-                <feature.icon className={`w-8 h-8 ${feature.color}`} />
+            <div key={index} className={styles.featureCard}>
+              <div className={`${styles.featureIcon} ${styles[feature.bgColor]}`}>
+                <feature.icon className={styles.featureIconSvg} />
               </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">
+              <h3 className={styles.featureTitle}>
                 {feature.title}
               </h3>
-              <p className="text-gray-600">
+              <p className={styles.featureDescription}>
                 {feature.description}
               </p>
             </div>
@@ -125,7 +124,7 @@ const Home = () => {
           </p>
           <Link
             to="/register"
-            className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold text-lg"
+            className={styles.primaryButton}
           >
             Create Your Account
           </Link>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { BarChart3, Plus, TrendingUp, Calendar } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { moodAPI } from '../utils/api';
+import styles from './MoodTracker.module.css';
 
 const MoodTracker = () => {
   const [moods, setMoods] = useState([]);
@@ -170,12 +171,12 @@ const MoodTracker = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">Mood Tracker</h1>
+    <div className={styles.moodTrackerContainer}>
+      <div className={styles.moodHeader}>
+        <h1 className={styles.moodTitle}>Mood Tracker</h1>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          className={styles.logMoodBtn}
         >
           <Plus className="h-5 w-5" />
           <span>Log Mood</span>
@@ -183,21 +184,17 @@ const MoodTracker = () => {
       </div>
 
       {/* Period Selector */}
-      <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-        <div className="flex items-center space-x-4 mb-4">
-          <TrendingUp className="h-6 w-6 text-blue-600" />
-          <h2 className="text-xl font-semibold">Viewing Period</h2>
+      <div className={styles.periodSelector}>
+        <div className={styles.periodHeader}>
+          <TrendingUp className={styles.periodIcon} />
+          <h2 className={styles.periodTitle}>Viewing Period</h2>
         </div>
-        <div className="flex space-x-4">
+        <div className={styles.periodButtons}>
           {['week', 'month'].map((period) => (
             <button
               key={period}
               onClick={() => setSelectedPeriod(period)}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                selectedPeriod === period
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+              className={`${styles.periodBtn} ${selectedPeriod === period ? styles.active : ''}`}
             >
               {period === 'week' ? 'Last 7 days' : 'Last 30 days'}
             </button>
@@ -206,7 +203,7 @@ const MoodTracker = () => {
       </div>
 
       {showForm && (
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <div className={styles.moodForm}>
           <h2 className="text-xl font-semibold mb-4">How are you feeling?</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -279,14 +276,14 @@ const MoodTracker = () => {
       {stats.length > 0 && (
         <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
           <h2 className="text-xl font-semibold mb-4">Mood Statistics</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className={styles.statsGrid}>
             {stats.map((stat) => {
               const moodInfo = getMoodInfo(stat._id);
               return (
-                <div key={stat._id} className={`p-4 rounded-lg ${moodInfo.color}`}>
-                  <div className="text-2xl font-bold">{stat.count} entries</div>
-                  <div className="text-lg">{moodInfo.label}</div>
-                  <div className="text-sm">Avg intensity: {stat.avgIntensity?.toFixed(1) || 'N/A'}</div>
+                <div key={stat._id} className={styles.statCard}>
+                  <div className={styles.statCount}>{stat.count} entries</div>
+                  <div className={styles.statLabel}>{moodInfo.label}</div>
+                  <div className={styles.statAvg}>Avg intensity: {stat.avgIntensity?.toFixed(1) || 'N/A'}</div>
                 </div>
               );
             })}
@@ -295,31 +292,31 @@ const MoodTracker = () => {
       )}
 
       {/* Mood History */}
-      <div className="bg-white rounded-lg shadow-lg p-6">
-        <h2 className="text-xl font-semibold mb-4">Mood History</h2>
+      <div className={styles.moodHistory}>
+        <h2 className={styles.historyTitle}>Mood History</h2>
         {moods.length === 0 ? (
           <div className="text-center py-8">
             <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <p className="text-gray-600">No mood entries yet. Start tracking your mood to see your patterns!</p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className={styles.moodList}>
             {moods.map((mood) => {
               const moodInfo = getMoodInfo(mood.moodType);
               return (
-                <div key={mood._id} className="border border-gray-200 rounded-lg p-4">
-                  <div className="flex justify-between items-start mb-2">
-                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${moodInfo.color}`}>
+                <div key={mood._id} className={styles.moodItem}>
+                  <div className={styles.moodHeader}>
+                    <span className={`${styles.moodBadge} ${styles[mood.moodType]}`}>
                       {moodInfo.label}
                     </span>
-                    <span className="text-sm text-gray-500">{formatDate(mood.createdAt)}</span>
+                    <span className={styles.moodDate}>{formatDate(mood.createdAt)}</span>
                   </div>
-                  <div className="mb-2">
+                  <div className={styles.moodIntensity}>
                     <span className="text-sm text-gray-600">Intensity: </span>
                     {renderIntensity(mood.intensity)}
                   </div>
                   {mood.note && (
-                    <p className="text-gray-700 text-sm">{mood.note}</p>
+                    <p className={styles.moodNote}>{mood.note}</p>
                   )}
                 </div>
               );

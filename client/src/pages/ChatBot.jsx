@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Send, Bot, User, Brain } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import styles from './ChatBot.module.css';
 
 const ChatBot = () => {
   const [messages, setMessages] = useState([]);
@@ -136,44 +137,38 @@ const ChatBot = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto h-full flex flex-col">
-      <div className="flex items-center space-x-3 mb-6">
-        <div className="bg-blue-100 p-3 rounded-full">
-          <Brain className="h-8 w-8 text-blue-600" />
+    <div className={styles.chatbotContainer}>
+      <div className={styles.chatHeader}>
+        <div className={styles.chatIcon}>
+          <Brain className={styles.chatIconSvg} />
         </div>
         <div>
-          <h1 className="text-3xl font-bold text-gray-800">AI Chat Support</h1>
-          <p className="text-gray-600">I'm here to listen and provide support</p>
+          <h1 className={styles.chatTitle}>AI Chat Support</h1>
+          <p className={styles.chatSubtitle}>I'm here to listen and provide support</p>
         </div>
       </div>
 
-      <div className="flex-1 bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
+      <div className={styles.chatInterface}>
         {/* Chat messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div className={styles.chatMessages}>
           {messages.map((message) => (
             <div
               key={message.id}
-              className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+              className={`${styles.messageContainer} ${message.sender === 'user' ? styles.messageUser : styles.messageAi}`}
             >
-              <div
-                className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                  message.sender === 'user'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-800'
-                }`}
-              >
-                <div className="flex items-center space-x-2 mb-1">
+              <div className={styles.messageBubble}>
+                <div className={styles.messageHeader}>
                   {message.sender === 'ai' ? (
-                    <Bot className="h-4 w-4" />
+                    <Bot className={styles.messageIcon} />
                   ) : (
-                    <User className="h-4 w-4" />
+                    <User className={styles.messageIcon} />
                   )}
-                  <span className="text-sm font-medium">
+                  <span className={styles.messageSender}>
                     {message.sender === 'ai' ? 'MindJournal AI' : 'You'}
                   </span>
                 </div>
-                <p className="text-sm">{message.text}</p>
-                <div className="text-xs opacity-70 mt-1">
+                <p className={styles.messageText}>{message.text}</p>
+                <div className={styles.messageTime}>
                   {message.timestamp.toLocaleTimeString()}
                 </div>
               </div>
@@ -181,16 +176,16 @@ const ChatBot = () => {
           ))}
           
           {isLoading && (
-            <div className="flex justify-start">
-              <div className="bg-gray-100 text-gray-800 px-4 py-2 rounded-lg">
-                <div className="flex items-center space-x-2">
-                  <Bot className="h-4 w-4" />
-                  <span className="text-sm font-medium">MindJournal AI</span>
+            <div className={styles.messageContainer}>
+              <div className={styles.messageBubble}>
+                <div className={styles.messageHeader}>
+                  <Bot className={styles.messageIcon} />
+                  <span className={styles.messageSender}>MindJournal AI</span>
                 </div>
-                <div className="flex space-x-1 mt-1">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                <div className={styles.loadingDots}>
+                  <div className={styles.dot}></div>
+                  <div className={styles.dot} style={{ animationDelay: '0.1s' }}></div>
+                  <div className={styles.dot} style={{ animationDelay: '0.2s' }}></div>
                 </div>
               </div>
             </div>
@@ -200,36 +195,36 @@ const ChatBot = () => {
         </div>
 
         {/* Input area */}
-        <form onSubmit={handleSendMessage} className="border-t border-gray-200 p-4">
-          <div className="flex space-x-2">
+        <div className={styles.chatInput}>
+          <form onSubmit={handleSendMessage} className={styles.inputForm}>
             <input
               type="text"
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               placeholder="Type your message here..."
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className={styles.messageInput}
               disabled={isLoading}
             />
             <button
               type="submit"
               disabled={isLoading || !inputMessage.trim()}
-              className="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className={styles.sendButton}
             >
               <Send className="h-5 w-5" />
             </button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
 
       {/* Quick suggestions */}
-      <div className="mt-6 bg-blue-50 rounded-lg p-4">
-        <h3 className="font-semibold text-blue-800 mb-2">Quick suggestions:</h3>
-        <div className="flex flex-wrap gap-2">
+      <div className={styles.suggestions}>
+        <h3 className={styles.suggestionsTitle}>Quick suggestions:</h3>
+        <div className={styles.suggestionsGrid}>
           {["I'm feeling stressed", "I'm anxious today", "I'm feeling happy", "I'm sad", "I need some support"].map((suggestion) => (
             <button
               key={suggestion}
               onClick={() => setInputMessage(suggestion)}
-              className="bg-white text-blue-600 px-3 py-1 rounded-full text-sm hover:bg-blue-100 transition-colors border border-blue-200"
+              className={styles.suggestionButton}
             >
               {suggestion}
             </button>
@@ -238,7 +233,7 @@ const ChatBot = () => {
       </div>
 
       {/* Disclaimer */}
-      <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+      <div className={styles.disclaimer}>
         <p className="text-sm text-yellow-800">
           <strong>Important:</strong> This AI chat provides supportive listening and general mental health information. 
           It is not a substitute for professional medical advice, diagnosis, or treatment. 
