@@ -1,60 +1,59 @@
 const express = require('express');
 const cors = require('cors');
-const dotenv = require('dotenv');
+const helmet = require('helmet');
+const morgan = require('morgan');
 const connectDB = require('./config/database');
 
-// Load env vars
-dotenv.config();
+// Route imports
+const userRoutes = require('./routes/userRoutes');
+const journalRoutes = require('./routes/journalRoutes');
+const moodRoutes = require('./routes/moodRoutes');
+const dashboardRoutes = require('./routes/dashboardRoutes'); // ✅ UNCOMMENT THIS
 
 // Connect to database
 connectDB();
 
-// Route files
-const userRoutes = require('./routes/userRoutes');
-const journalRoutes = require('./routes/journalRoutes');
-const moodRoutes = require('./routes/moodRoutes');
-
 const app = express();
 
-// CORS configuration - fix this part
-const corsOptions = {
-  origin: ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:5174'],
-  credentials: true,
-  optionsSuccessStatus: 200
-};
-
-// Enable CORS with the correct options
-app.use(cors(corsOptions));
-
-// Body parser middleware
+// Middleware
+app.use(helmet());
+app.use(cors());
+app.use(morgan('combined'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Mount routers
-app.use('/api/users', userRoutes);
-app.use('/api/journal', journalRoutes);
-app.use('/api/mood', moodRoutes);
-
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    message: 'Mental Health Journal API is running!',
+  res.status(200).json({
+    status: 'success',
+    message: 'Server is running smoothly!',
     timestamp: new Date().toISOString()
   });
 });
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error('Error:', err.stack);
-  res.status(500).json({ 
-    message: 'Something went wrong!',
-    error: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
+// Routes
+app.use('/api/users', userRoutes);
+app.use('/api/journal', journalRoutes);
+app.use('/api/mood', moodRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+
+// 404 handler
+app.use('*', (req, res) => {
+  res.status(404).json({
+    status: 'error',
+    message: 'Route not found'
   });
 });
 
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({ message: 'API endpoint not found' });
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error('Error:', err.stack);
+  
+  res.status(err.status || 500).json({
+    status: 'error',
+    message: err.message || 'Internal server error',
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+  });
 });
 
 module.exports = app;
