@@ -1,5 +1,5 @@
 const express = require('express');
-const router = express.Router(); // Use Express's Router
+const expressRouter = express.Router();  // Use Express's Router
 const auth = require('../middleware/auth');
 const Mood = require('../models/Mood');
 
@@ -107,4 +107,4 @@ function calculateMoodDistribution(entries) {
   return distribution;
 }
 
-module.exports = router;
+module.exports = expressRouter;
