@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/auth');
+const { protect } = require('../middleware/auth');
 const JournalEntry = require('../models/JournalEntry');
 
 // Get dashboard statistics
-router.get('/stats', auth, async (req, res) => {
+router.get('/stats', protect, async (req, res) =>  {
   try {
     const userId = req.user.id;
     
