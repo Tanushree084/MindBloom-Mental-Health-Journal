@@ -55,18 +55,6 @@ const Home = () => {
               Welcome back, <span className="font-semibold text-blue-600">{user.username}</span>!
             </p>
             <div className="flex justify-center space-x-4">
-              <Link
-                to="/journal"
-                className={styles.primaryButton}
-              >
-                Write Journal
-              </Link>
-              <Link
-                to="/mood"
-                className={styles.secondaryButton}
-              >
-                Track Mood
-              </Link>
             </div>
           </div>
         ) : (

@@ -1,126 +1,149 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { Menu, X, Brain, User, LogOut } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
-import api from '../utils/api';
-import styles from './Dashboard.module.css';
+import styles from './Navbar.module.css';
 
-const Dashboard = () => {
-  const { user } = useAuth();
-  const [stats, setStats] = useState({
-    avgMood: 0,
-    currentStreak: 0,
-    maxStreak: 0,
-    totalEntries: 0,
-    moodDistribution: {}
-  });
-  const [loading, setLoading] = useState(true);
+const Navbar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const { user, logout } = useAuth();
+  const location = useLocation();
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
+  const navigation = [
+    { name: 'Home', href: '/' },
+    { name: 'Dashboard', href: '/dashboard' }, // Add this line
+    { name: 'Journal', href: '/journal' },
+    { name: 'Mood Tracker', href: '/mood' },
+    { name: 'AI Chat', href: '/chat' },
+    { name: 'About', href: '/about' },
+  ];
 
-  const fetchDashboardData = async () => {
-    try {
-      const response = await api.get('/dashboard/stats');
-      setStats(response.data);
-    } catch (error) {
-      console.error('Error fetching dashboard data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) {
-    return <div className={styles.loading}>Loading dashboard...</div>;
-  }
+  const isActive = (path) => location.pathname === path;
 
   return (
-    <div className={styles.dashboard}>
-      <div className={styles.header}>
-        <h1>Welcome back, {user?.name}!</h1>
-        <p>Here's your mental health overview</p>
-      </div>
+    <nav className={styles.navbar}>
+      <div className={styles.navbarContainer}>
+        <div className={styles.navbarContent}>
+          {/* Logo */}
+          <Link to="/" className={styles.navbarBrand}>
+            <Brain className={styles.logoIcon} />
+            <span className={styles.logoText}>MindBloom</span>
+          </Link>
 
-      <div className={styles.statsGrid}>
-        {/* Average Mood Card */}
-        <div className={styles.statCard}>
-          <div className={styles.statIcon}>😊</div>
-          <h3>Average Mood</h3>
-          <p className={styles.statValue}>{stats.avgMood.toFixed(1)}/5</p>
-        </div>
+          {/* Desktop Navigation */}
+          <div className={styles.desktopNav}>
+            {navigation.map((item) => (
+              <Link
+                key={item.name}
+                to={item.href}
+                className={`${styles.navLink} ${isActive(item.href) ? styles.navLinkActive : ''}`}
+              >
+                {item.name}
+              </Link>
+            ))}
+          </div>
 
-        {/* Current Streak Card */}
-        <div className={styles.statCard}>
-          <div className={styles.statIcon}>🔥</div>
-          <h3>Current Streak</h3>
-          <p className={styles.statValue}>{stats.currentStreak} days</p>
-        </div>
-
-        {/* Max Streak Card */}
-        <div className={styles.statCard}>
-          <div className={styles.statIcon}>⭐</div>
-          <h3>Longest Streak</h3>
-          <p className={styles.statValue}>{stats.maxStreak} days</p>
-        </div>
-
-        {/* Total Entries Card */}
-        <div className={styles.statCard}>
-          <div className={styles.statIcon}>📝</div>
-          <h3>Total Entries</h3>
-          <p className={styles.statValue}>{stats.totalEntries}</p>
-        </div>
-      </div>
-
-      {/* Streak Visualization */}
-      <div className={styles.streakSection}>
-        <h2>Your Streaks</h2>
-        <div className={styles.streakVisualization}>
-          {Array.from({ length: Math.max(stats.maxStreak, 7) }, (_, i) => (
-            <div
-              key={i}
-              className={`${styles.streakDay} ${
-                i < stats.currentStreak ? styles.active : styles.inactive
-              }`}
-            >
-              {i + 1}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Mood Distribution */}
-      <div className={styles.moodDistribution}>
-        <h2>Mood Distribution</h2>
-        <div className={styles.moodBars}>
-          {Object.entries(stats.moodDistribution).map(([mood, count]) => (
-            <div key={mood} className={styles.moodBar}>
-              <span className={styles.moodLabel}>{mood}</span>
-              <div className={styles.barContainer}>
-                <div
-                  className={styles.barFill}
-                  style={{
-                    width: `${(count / stats.totalEntries) * 100}%`,
-                    backgroundColor: getMoodColor(mood)
-                  }}
-                ></div>
+          {/* User Section */}
+          <div className={styles.userSection}>
+            {user ? (
+              <div className={styles.userContainer}>
+                <div className={styles.userInfo}>
+                  <User className={styles.userIcon} />
+                  <span className={styles.username}>{user.username}</span>
+                </div>
+                <button
+                  onClick={logout}
+                  className={styles.logoutBtn}
+                >
+                  <LogOut className={styles.logoutIcon} />
+                  <span>Logout</span>
+                </button>
               </div>
-              <span className={styles.moodCount}>{count}</span>
-            </div>
-          ))}
+            ) : (
+              <div className={styles.authButtons}>
+                <Link
+                  to="/login"
+                  className={styles.loginBtn}
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/register"
+                  className={styles.signupBtn}
+                >
+                  Sign Up
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {/* Mobile menu button */}
+          <div className={styles.mobileMenuButton}>
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className={styles.mobileMenuBtn}
+            >
+              {isOpen ? <X className={styles.menuIcon} /> : <Menu className={styles.menuIcon} />}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile Navigation */}
+        {isOpen && (
+          <div className={styles.mobileNav}>
+            <div className={styles.mobileNavContent}>
+              {navigation.map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  onClick={() => setIsOpen(false)}
+                  className={`${styles.mobileNavLink} ${isActive(item.href) ? styles.mobileNavLinkActive : ''}`}
+                >
+                  {item.name}
+                </Link>
+              ))}
+              
+              {user ? (
+                <div className={styles.mobileUserSection}>
+                  <div className={styles.mobileUserInfo}>
+                    <User className={styles.mobileUserIcon} />
+                    <span className={styles.mobileUsername}>{user.username}</span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      logout();
+                      setIsOpen(false);
+                    }}
+                    className={styles.mobileLogoutBtn}
+                  >
+                    <LogOut className={styles.mobileLogoutIcon} />
+                    <span>Logout</span>
+                  </button>
+                </div>
+              ) : (
+                <div className={styles.mobileAuthButtons}>
+                  <Link
+                    to="/login"
+                    onClick={() => setIsOpen(false)}
+                    className={styles.mobileLoginBtn}
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to="/register"
+                    onClick={() => setIsOpen(false)}
+                    className={styles.mobileSignupBtn}
+                  >
+                    Sign Up
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
-    </div>
+    </nav>
   );
 };
 
-const getMoodColor = (mood) => {
-  const colors = {
-    'Very Happy': '#4CAF50',
-    'Happy': '#8BC34A',
-    'Neutral': '#FFC107',
-    'Sad': '#FF9800',
-    'Very Sad': '#F44336'
-  };
-  return colors[mood] || '#9E9E9E';
-};
-
-export default Dashboard;
+export default Navbar;
