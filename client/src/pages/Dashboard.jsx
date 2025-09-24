@@ -11,7 +11,7 @@ const Navbar = () => {
 
   const navigation = [
     { name: 'Home', href: '/' },
-    { name: 'Dashboard', href: '/dashboard' }, // Add this line
+    { name: 'Dashboard', href: '/dashboard' }, 
     { name: 'Journal', href: '/journal' },
     { name: 'Mood Tracker', href: '/mood' },
     { name: 'AI Chat', href: '/chat' },
